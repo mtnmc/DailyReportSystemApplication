@@ -49,6 +49,15 @@ public class EmployeeController {
         return "employees/detail";
     }
 
+    // 従業員更新画面
+    @GetMapping(value = "/update")
+        public String update() {
+
+        return "employees/update";
+        }
+
+
+
     // 従業員新規登録画面
     @GetMapping(value = "/add")
     public String create(@ModelAttribute Employee employee) {
