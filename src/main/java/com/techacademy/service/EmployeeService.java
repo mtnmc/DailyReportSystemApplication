@@ -119,4 +119,30 @@ public class EmployeeService {
         return passwordLength < 8 || 16 < passwordLength;
     }
 
+    // 従業員更新
+    @Transactional
+    public ErrorKinds update(Employee employee) {
+        Employee updateEmployee = findByCode(employee.getCode());
+
+        if(!employee.getPassword().isEmpty()) {
+            ErrorKinds result = employeePasswordCheck(employee);
+                if (ErrorKinds.CHECK_OK != result) {
+                    return result;
+                }
+       } else {
+                employee.setPassword(updateEmployee.getPassword());
+       }
+
+
+        employee.setDeleteFlg(false);
+
+        LocalDateTime now = LocalDateTime.now();
+        employee.setCreatedAt(updateEmployee.getCreatedAt());//nowではない…
+        employee.setUpdatedAt(now);
+
+        employeeRepository.save(employee);
+        return ErrorKinds.SUCCESS;
+    }
+
+
 }
