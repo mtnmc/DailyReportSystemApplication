@@ -1,8 +1,11 @@
 package com.techacademy.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,36 +14,42 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 @Entity
 @Table
+@SQLRestriction("delete_flg = false")
 public class Report {
 
     // ID
     @Id
-    @NotEmpty
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     // 日付
-    private String report_date;
+    @NotNull
+    @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate reportDate;
 
     // タイトル
-    @Column(length = 20, nullable = false)
+    @Column(length = 100, nullable = false)
     @NotEmpty
-    @Length(max = 20)
+    @Length(max = 100)
     private String title;
 
     // 内容
+    @Column(columnDefinition="LONGTEXT", length = 600, nullable = false)
+    @NotEmpty
+    @Length(max = 600)
     private String content;
 
     // 社員番号
     @Column(length = 10)
-    @NotEmpty
     @Length(max = 10)
-    private String employee_code;
+    private String employeeCode;
 
     // 削除フラグ(論理削除を行うため)
     @Column(columnDefinition="TINYINT", nullable = false)

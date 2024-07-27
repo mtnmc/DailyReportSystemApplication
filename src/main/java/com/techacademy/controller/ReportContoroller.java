@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
 import com.techacademy.entity.Employee;
+import com.techacademy.entity.Report;
 import com.techacademy.service.UserDetail;
 
 @Controller
@@ -57,21 +58,20 @@ public class ReportContoroller {
 
     // 日報新規登録画面
     @GetMapping(value = "/reports/new")
-    public String create(Model model) {
-
-        model.addAttribute("kariname", kariname);
-        model.addAttribute("karititle", karititle);
-        model.addAttribute("karimemo", karimemo);
-        model.addAttribute("karidate", karidate);
-        model.addAttribute("kariredate", kariredate);
+    public String create(@ModelAttribute Report report) {
 
 
-        return "/reports/new";
+        return "reports/new";
     }
 
     // 日報新規登録処理
-    @PostMapping("/reports/new")
-    public String add(Model model) {
+    @PostMapping("reports/new")
+    public String add(@Validated Report report, BindingResult res, Model model) {
+
+        if(res.hasErrors()) {
+            // エラーあり
+            return create(report);
+        }
 
         return "redirect:/reports";
     }
@@ -85,8 +85,8 @@ public class ReportContoroller {
     }
 
     // 日報更新画面
-    @GetMapping(value = "/reports/update")
-    public String edit(Model model) {
+    @GetMapping(value = "reports/update")
+    public String edit(Report report, Model model) {
 
         model.addAttribute("kariname", kariname);
         model.addAttribute("karititle", karititle);
@@ -99,8 +99,13 @@ public class ReportContoroller {
     }
 
     // 日報更新処理
-    @PostMapping(value = "/reports/update")
-    public String update(Model model) {
+    @PostMapping(value = "reports/update")
+    public String update(@Validated Report report, BindingResult res, Model model) {
+
+        if(res.hasErrors()) {
+            // エラーあり
+            return edit(report,model);
+        }
 
 
         return "redirect:/reports";

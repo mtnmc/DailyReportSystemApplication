@@ -18,13 +18,14 @@
                     <div class="card">
 
                         <div class="card-body">
-                        <form th:action="@{/reports/update}"th:method="post">
+                        <form th:action="@{/reports/update}" th:object="${report}" th:method="post">
                             <div class="wizard wizard-success mb-4">
                                 <div class="mb-3">
                                     <label class="form-label" for="code">日付</label>
                                     <p class="mb-1"></p>
                                     <div class="col-md-4">
-                                        <input type="date" th:value="${karidate}" class="form-control"  >
+                                        <input type="date" class="form-control" th:errorclass="err" th:field="*{reportDate}" id="reportDate" >
+                                        <span th:errors="*{reportDate}" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -39,15 +40,16 @@
                                     <label class="form-label" for="code">タイトル</label>
                                     <p class="mb-1"></p>
                                     <div class="col-md-5">
-                                        <input th:value="${karititle}" class="form-control" type="text" id="title">
-                                        <span ></span>
+                                        <input class="form-control" type="text" th:errorclass="err" th:field="*{title}" id="title">
+                                        <span th:errors="*{title}" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label" for="code">内容</label>
+                                    <label class="form-label" for="content">内容</label>
                                     <p class="mb-1"></p>
                                     <div class="col-md-7">
-                                        <textarea class="form-control">[[${karimemo}]]</textarea>
+                                        <textarea class="form-control" th:errorclass="err" th:field="*{content}" id="content"></textarea>
+                                        <span th:errors="*{content}" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
