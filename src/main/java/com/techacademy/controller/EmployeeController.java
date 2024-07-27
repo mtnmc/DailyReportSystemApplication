@@ -49,7 +49,7 @@ public class EmployeeController {
         return "employees/detail";
     }
 
- // 従業員更新画面
+    // 従業員更新画面
     @GetMapping(value = "/{code}/update")
     public String edit(@PathVariable String code, Model model) {
 

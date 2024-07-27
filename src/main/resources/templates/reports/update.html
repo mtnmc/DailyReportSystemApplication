@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="h-100" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="common/header :: head_fragment(title=従業員更新)"></head>
+<head th:replace="common/header :: head_fragment(title=日報更新)"></head>
 
 <body class="h-100 overflow-hidden">
     <div class="row h-100">
@@ -11,51 +11,49 @@
         <div class="mt-3 h-100 col-sm-10">
         <!-- コンテンツ -->
             <div class="container-fluid p-0">
-                <h1 class="h3 mb-3">従業員 更新</h1>
+                <h1 class="h3 mb-3">日報 更新</h1>
             </div>
             <div class="row">
                 <div class="col-xl-11">
                     <div class="card">
-                        <div class="card-header" >パスワードは変更する場合のみ入力してください</div>
+
                         <div class="card-body">
-                        <form th:action="@{/employees/{code}/update(code=${employee.code})}" th:object="${employee}" th:method="post">
+                        <form th:action="@{/reports/update}"th:method="post">
                             <div class="wizard wizard-success mb-4">
                                 <div class="mb-3">
-                                    <label class="form-label" for="code">社員番号</label>
+                                    <label class="form-label" for="code">日付</label>
                                     <p class="mb-1"></p>
-                                    <div class="col-md-7">
-                                        <label th:text="*{code}" ></label>
+                                    <div class="col-md-4">
+                                        <input type="date" th:value="${karidate}" class="form-control"  >
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label" for="code">氏名</label>
                                     <p class="mb-1"></p>
                                     <div class="col-md-7">
-                                        <input class="form-control" type="text" th:field="*{name}" th:errorclass="err"  id="name">
-                                        <span th:errors="*{name}" class="text-danger"></span>
+                                        <label th:text="${kariname}"></label>
+                                        <span ></span>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label" for="code">パスワード</label>
+                                    <label class="form-label" for="code">タイトル</label>
+                                    <p class="mb-1"></p>
+                                    <div class="col-md-5">
+                                        <input th:value="${karititle}" class="form-control" type="text" id="title">
+                                        <span ></span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="code">内容</label>
                                     <p class="mb-1"></p>
                                     <div class="col-md-7">
-                                        <input class="form-control" type="password" th:field="*{password}" th:errorclass="err" id="password">
-                                        <span th:if="${passwordError} neq null" th:text="${passwordError}" class="text-danger"></span>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label" for="code">権限</label>
-                                    <p class="mb-1"></p>
-                                    <div class="col-md-4">
-                                        <select class="form-select" th:field="*{role}" id="role">
-                                            <option th:each="item:${T(com.techacademy.entity.Employee.Role).values()}" th:value="${item}" th:text="${item.getValue()}" th:selected="*{role} == ${item}">
-                                        </select>
+                                        <textarea class="form-control">[[${karimemo}]]</textarea>
                                     </div>
                                 </div>
                             </div>
                                 <p class="mt-5">
                                     <input type="submit" value="更新" class="btn btn-primary">
-                                    <a th:href="@{/employees}" class="btn btn-primary">戻る</a>
+                                    <a th:href="@{/reports}" class="btn btn-primary">戻る</a>
                                 </p>
                             </form>
                         </div>
