@@ -1,5 +1,7 @@
 package com.techacademy.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,11 +29,12 @@ import com.techacademy.service.UserDetail;
 public class ReportContoroller {
 
     private final ReportService reportService;
-    //private final EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
     @Autowired
-    public ReportContoroller(ReportService reportService) {
+    public ReportContoroller(ReportService reportService, EmployeeService employeeService) {
         this.reportService = reportService;
+        this.employeeService = employeeService;
     }
 
 
@@ -46,62 +49,90 @@ public class ReportContoroller {
     }
 
     // 日報詳細画面
-    @GetMapping(value = "/reports/detail")//serviceつくるまでいったんdetailで接続させる
-    public String detail(Model model) {
+    @GetMapping(value = "/{id}/")
+    public String detail(@PathVariable int id, Model model) {
 
-
-        //model.addAttribute("employee", employeeService.findByCode(code));
+        Report report = reportService.findById(id);
+        model.addAttribute("report", report);
+        model.addAttribute("employee", employeeService.findByCode(report.getEmployee().getCode()));
         return "/reports/detail";
     }
 
     // 日報新規登録画面
-    @GetMapping(value = "/reports/new")
-    public String create(@ModelAttribute Report report) {
+    @GetMapping("/add")
+    public String create(@AuthenticationPrincipal UserDetail userDetail, @ModelAttribute Report report) {
 
-
+        report.setEmployee(userDetail.getEmployee());
         return "reports/new";
     }
 
     // 日報新規登録処理
-    @PostMapping("reports/new")
-    public String add(@Validated Report report, BindingResult res, Model model) {
+    @PostMapping("/add")
+    public String add(@AuthenticationPrincipal UserDetail userDetail, @Validated Report report, BindingResult res, Model model) {
 
-        if(res.hasErrors()) {
-            // エラーあり
-            return create(report);
+
+        if (res.hasErrors()) {
+            return create(userDetail, report);
         }
 
-        return "redirect:/reports";
+        report.setEmployeeCode(userDetail.getEmployee().getCode());
+        ErrorKinds result = reportService.save(report);
+
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            return create(userDetail, report);
+        }
+
+        return "redirect:/";
     }
 
     // 従業員削除処理
-    @PostMapping(value = "/reports/detail")
-    public String delete(Model model) {
+    @PostMapping(value = "/{id}/delete")
+    public String delete(@PathVariable Integer id) {
 
+        reportService.delete(id);
 
         return "redirect:/reports";
     }
 
     // 日報更新画面
-    @GetMapping(value = "reports/update")
-    public String edit(Report report, Model model) {
+    @GetMapping(value = "/{id}/update")
+    public String edit(@PathVariable Integer id, Model model) {
 
+        if(id == null) {
+            return "reports/update";
+        }
 
-        //model.addAttribute("employee", employeeService.findByCode(code));
-        return "/reports/update";
+        model.addAttribute("report", reportService.findById(id));
+        return "reports/update";
     }
 
     // 日報更新処理
-    @PostMapping(value = "reports/update")
-    public String update(@Validated Report report, BindingResult res, Model model) {
+    @PostMapping(value = "/{id}/update")
+    public String update(@PathVariable Integer id, @Validated Report report, BindingResult res, Model model) {
+        report.setEmployee(reportService.findById(id).getEmployee());
 
         if(res.hasErrors()) {
-            // エラーあり
-            return edit(report,model);
+
+            model.addAttribute("report", report);
+            return edit(null, model);
         }
 
+        String employeeCode = report.getEmployee().getCode();
+        LocalDate reportDate = report.getReportDate();
+        String title = report.getTitle();
+        String content = report.getContent();
 
-        return "redirect:/reports";
+        ErrorKinds result = reportService.update(employeeCode, id, reportDate, title, content);
+
+        if (ErrorMessage.contains(result)) {
+
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            model.addAttribute(report);
+            return edit(null, model);
+            }
+        return "redirect:/";
+
     }
 
 

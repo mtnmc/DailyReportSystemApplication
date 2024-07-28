@@ -48,10 +48,10 @@ public class Report {
     @Length(max = 600)
     private String content;
 
-    // 社員番号
-    @ManyToOne
-    @JoinColumn(name = "employee_code", referencedColumnName = "code", nullable = false)
-    private Employee employee;
+ // 社員番号
+    @Column(length = 10, nullable = false)
+    @Length(max = 10)
+    private String employeeCode;
 
     // 削除フラグ(論理削除を行うため)
     @Column(columnDefinition="TINYINT", nullable = false)
@@ -64,6 +64,10 @@ public class Report {
     // 更新日時
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(insertable=false, updatable=false, name = "employeeCode", referencedColumnName = "code", nullable = false)
+    private Employee employee;
 
 
 }
