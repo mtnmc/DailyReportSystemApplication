@@ -1,5 +1,6 @@
 package com.techacademy.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,18 +17,30 @@ import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
 import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
+import com.techacademy.service.EmployeeService;
+import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
 
 @Controller
-@RequestMapping
+@RequestMapping("reports")
 
 public class ReportContoroller {
 
+    private final ReportService reportService;
+    //private final EmployeeService employeeService;
+
+    @Autowired
+    public ReportContoroller(ReportService reportService) {
+        this.reportService = reportService;
+    }
+
 
     // 日報一覧画面
-    @GetMapping(value = "/reports")
+    @GetMapping
     public String list(Model model) {
 
+        model.addAttribute("listSize", reportService.findAll().size());
+        model.addAttribute("reportList", reportService.findAll());
 
         return "reports/list";
     }
